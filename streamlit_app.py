@@ -2,6 +2,7 @@
 import streamlit as st
 #from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
+import requests
 
 # Write directly to the app
 #st.title("Customize Your Smoothie! :balloon:")
@@ -9,6 +10,10 @@ st.title(":cup_with_straw: Customize Your Smoothie! :cup_with_straw:")
 st.write(
     "Choose the fruits you want on your custom Smoothie!"
 )
+
+#API call:
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+st.text(fruityvice_response)
 
 name_on_order = st.text_input("Name on Smoothie:")
 st.write("The name on your Smoothie will be:", name_on_order)

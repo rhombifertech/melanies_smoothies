@@ -5,7 +5,6 @@ from snowflake.snowpark.functions import col
 import requests
 
 # Write directly to the app
-#st.title("Customize Your Smoothie! :balloon:")
 st.title(":cup_with_straw: Customize Your Smoothie! :cup_with_straw:")
 st.write(
     "Choose the fruits you want on your custom Smoothie!"
@@ -18,7 +17,6 @@ cnx = st.connection("snowflake")
 session = cnx.session()
 #session = get_active_session()
 
-#st.dataframe(data=my_dataframe, use_container_width=True)
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 
 ingredients_list = st.multiselect(
@@ -26,22 +24,15 @@ ingredients_list = st.multiselect(
     my_dataframe,
     max_selections=5)
 
-#API call:
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-#st.text(fruityvice_response.json())
-fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
-
 if ingredients_list:
     ingredients_string = ''
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
-    #st.write(ingredients_string)
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_chosen.lowercase())
+        fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
 
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order)
             values ('""" + ingredients_string + """','""" + name_on_order + """')"""
-
-    #st.write(my_insert_stmt)
-    #st.stop()
 
     time_to_insert = st.button('Submit Order')
     
